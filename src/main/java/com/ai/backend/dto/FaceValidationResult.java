@@ -8,6 +8,8 @@ import lombok.Data;
 public class FaceValidationResult {
     private boolean faceDetected;
     private String blurLikelihood;
+    private boolean isFrontFace;
+    private boolean isSideFace;
     private HeadPose headPose;
 
     @Data

@@ -51,9 +51,14 @@ public class GcpVisionService {
                 // Get first face
                 FaceAnnotation face = faces.get(0);
                 
+                boolean isFront = isFrontFacing(face);
+                boolean isSide = isSideFacing(face);
+
                 return FaceValidationResult.builder()
                         .faceDetected(true)
                         .blurLikelihood(face.getBlurredLikelihood().name())
+                        .isFrontFace(isFront)
+                        .isSideFace(isSide)
                         .headPose(FaceValidationResult.HeadPose.builder()
                                 .rollAngle(face.getRollAngle())
                                 .panAngle(face.getPanAngle())
@@ -63,6 +68,19 @@ public class GcpVisionService {
             }
         }
         return FaceValidationResult.builder().faceDetected(false).build();
+    }
+
+    private boolean isFrontFacing(FaceAnnotation face) {
+        // Front facing means looking relatively straight at the camera
+        // Pan angle (left/right) should be small (e.g., within +/- 15 degrees)
+        // Tilt angle (up/down) should be small (e.g., within +/- 15 degrees)
+        return Math.abs(face.getPanAngle()) <= 15 && Math.abs(face.getTiltAngle()) <= 15;
+    }
+
+    private boolean isSideFacing(FaceAnnotation face) {
+        // Side facing means looking significantly to the left or right
+        // Pan angle should be greater than a threshold (e.g., > 25 degrees or < -25 degrees)
+        return Math.abs(face.getPanAngle()) > 25;
     }
 
     private List<AnnotateImageRequest> prepareRequest(MultipartFile file) throws IOException {

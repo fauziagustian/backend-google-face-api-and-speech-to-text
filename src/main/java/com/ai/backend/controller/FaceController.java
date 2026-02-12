@@ -27,14 +27,26 @@ public class FaceController {
             @RequestPart("sideImage") MultipartFile sideImage
     ) throws IOException {
         
-        // 1. Validate faces
-        if (!visionService.hasFace(frontImage)) {
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("No face detected in front image"));
+        // 1. Validate Front Image
+        FaceValidationResult frontResult = visionService.validateFace(frontImage);
+        if (!frontResult.isFaceDetected()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("No face detected in front image"));
         }
-        if (!visionService.hasFace(sideImage)) {
+        if (!frontResult.isFrontFace()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("No face detected in side image"));
+                    .body(ApiResponse.error("Invalid Front Image: Please look straight at the camera. Pan: " + 
+                            frontResult.getHeadPose().getPanAngle()));
+        }
+
+        // 2. Validate Side Image
+        FaceValidationResult sideResult = visionService.validateFace(sideImage);
+        if (!sideResult.isFaceDetected()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("No face detected in side image"));
+        }
+        if (!sideResult.isSideFace()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("Invalid Side Image: Please rotate your head to the side (> 25 degrees). Pan: " + 
+                            sideResult.getHeadPose().getPanAngle()));
         }
 
         // 2. Upload to Storage
