@@ -68,6 +68,41 @@ Jalankan aplikasi menggunakan Maven Wrapper:
 ```
 Aplikasi akan berjalan di `http://localhost:8080`.
 
+## ☁️ Deployment ke Google Cloud Platform (GCP)
+
+### Opsi 1: Menggunakan Script Otomatis (Windows)
+1. Pastikan **Google Cloud SDK** sudah terinstall dan Anda sudah login:
+   ```powershell
+   gcloud auth login
+   gcloud config set project ai-project-487201
+   ```
+2. Jalankan script deployment:
+   ```powershell
+   .\deploy.ps1
+   ```
+   Script ini akan otomatis:
+   - Mengaktifkan API yang dibutuhkan.
+   - Build docker image ke Container Registry.
+   - Deploy aplikasi ke **Cloud Run** (Region Jakarta).
+
+### Opsi 2: Manual Deployment
+Jika Anda ingin melakukan deployment secara manual:
+
+1. **Build Container**
+   ```bash
+   gcloud builds submit --tag gcr.io/ai-project-487201/backend-api .
+   ```
+
+2. **Deploy ke Cloud Run**
+   ```bash
+   gcloud run deploy backend-api \
+     --image gcr.io/ai-project-487201/backend-api \
+     --platform managed \
+     --region asia-southeast2 \
+     --allow-unauthenticated \
+     --memory 1Gi
+   ```
+
 ## 📚 Dokumentasi API
 
 ### 1. Face Enrollment
