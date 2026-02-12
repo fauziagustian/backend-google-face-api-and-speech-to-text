@@ -1,0 +1,44 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse
+.classpath
+.project
+.settings/
+.springBeans
+bin/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Spring Boot
+.mvn/timing.properties
+
+# Project Specific (Generated/Secrets)
+debug.wav
+ai-project-*.json
+*.jks
+*.p12
+credentials.json
+secrets.json
+
+# Temporary files
+*.tmp
+*.bak
